@@ -1,0 +1,2093 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUMDes Peternakan Ayam Petelur</title>
+    <style>
+        /* CSS Reset & Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0ea5e9;
+            --primary-dark: #0284c7;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #ffffff;
+            --bg-secondary: #f8fafc;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        html.dark {
+            --bg: #0f172a;
+            --bg-secondary: #1e293b;
+            --text: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Utility Classes */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-1 { gap: 0.25rem; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+        .p-1 { padding: 0.25rem; }
+        .p-2 { padding: 0.5rem; }
+        .p-4 { padding: 1rem; }
+        .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mr-2 { margin-right: 0.5rem; }
+        .text-sm { font-size: 0.875rem; }
+        .text-lg { font-size: 1.125rem; }
+        .font-bold { font-weight: bold; }
+        .text-center { text-align: center; }
+        .hidden { display: none; }
+        .w-full { width: 100%; }
+        .bg-white { background: var(--bg); }
+        .bg-secondary { background: var(--bg-secondary); }
+        .border { border: 1px solid var(--border); }
+        .rounded { border-radius: 0.25rem; }
+        .shadow { box-shadow: var(--shadow); }
+
+        /* Layout */
+        .app-layout {
+            display: grid;
+            grid-template-areas: "header header" "sidebar content";
+            grid-template-rows: 60px 1fr;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+
+        @media (max-width: 768px) {
+            .app-layout {
+                grid-template-areas: "header" "content";
+                grid-template-columns: 1fr;
+            }
+            .sidebar { display: none; }
+            .mobile-menu-open .sidebar {
+                display: block;
+                position: fixed;
+                top: 60px;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 50;
+                background: var(--bg);
+            }
+        }
+
+        /* Header */
+        .header {
+            grid-area: header;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            padding: 0 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            grid-area: sidebar;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--text);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Content */
+        .content {
+            grid-area: content;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        /* Components */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 0.25rem;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+        }
+
+        /* Table */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        .table tbody tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        /* Card */
+        .card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            color: white;
+            z-index: 110;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+        .toast.warning { background: var(--warning); }
+        .toast.info { background: var(--primary); }
+
+        /* Login */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-secondary);
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+            background: var(--bg);
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        /* Print Styles */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; color: black; }
+            .print-content {
+                max-width: none;
+                margin: 0;
+                padding: 20mm;
+            }
+        }
+
+        /* Chart Canvas */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 1rem 0;
+        }
+
+        .chart-canvas {
+            border: 1px solid var(--border);
+            border-radius: 0.25rem;
+        }
+
+        /* Demo Banner */
+        .demo-banner {
+            background: var(--warning);
+            color: white;
+            padding: 0.5rem;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Demo Audio (tiny base64 encoded beep) -->
+    <audio id="snd-new-order" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUYbXu5Z5MAw9Noe3yw2MfBjeM1fTJeSmE" type="audio/wav">
+    </audio>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="login-container">
+        <div class="login-card">
+            <div class="demo-banner mb-4">
+                🔥 DEMO - Bukan Sistem Produksi 🔥
+            </div>
+            <h2 class="text-lg font-bold mb-4 text-center">BUMDes Peternakan Ayam Petelur</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-full">Login</button>
+            </form>
+            <div class="mt-4 text-sm text-center">
+                <p><strong>Akun Demo:</strong></p>
+                <p>Admin: admin@bumdes.local / 123456</p>
+                <p>Pelanggan: pelanggan@contoh.local / 123456</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="main-app" class="app-layout hidden">
+        <!-- Header -->
+        <header class="header">
+            <div class="brand">BUMDes Peternakan Ayam</div>
+            <div class="user-info">
+                <button id="theme-toggle" class="btn btn-secondary btn-sm">🌓</button>
+                <span id="user-name"></span>
+                <button id="logout-btn" class="btn btn-secondary btn-sm">Logout</button>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div id="nav-menu"></div>
+        </nav>
+
+        <!-- Content -->
+        <main class="content">
+            <div id="page-content"></div>
+        </main>
+    </div>
+
+    <!-- Modal Template -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title"></h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        // Global State
+        let currentUser = null;
+        let currentRoute = 'dashboard';
+        
+        // Utility Functions
+        const $ = (selector) => document.querySelector(selector);
+        const $$ = (selector) => document.querySelectorAll(selector);
+        
+        const formatRupiah = (amount) => {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(amount);
+        };
+        
+        const formatDate = (date) => {
+            if (typeof date === 'string') date = new Date(date);
+            return new Intl.DateTimeFormat('id-ID').format(date);
+        };
+        
+        const formatPercent = (value) => {
+            return (value || 0).toFixed(1) + '%';
+        };
+        
+        const escapeHtml = (text) => {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        };
+        
+        const generateId = (prefix = '') => {
+            const timestamp = Date.now();
+            const random = Math.random().toString(36).substr(2, 9);
+            return prefix ? `${prefix}-${timestamp}-${random}` : `${timestamp}-${random}`;
+        };
+        
+        // Storage Wrapper
+        const Storage = {
+            get: (key) => {
+                try {
+                    const data = localStorage.getItem(`bumdes_layer_${key}`);
+                    return data ? JSON.parse(data) : null;
+                } catch (e) {
+                    return null;
+                }
+            },
+            
+            set: (key, value) => {
+                try {
+                    localStorage.setItem(`bumdes_layer_${key}`, JSON.stringify(value));
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            },
+            
+            list: (key) => {
+                return this.get(key) || [];
+            },
+            
+            push: (key, item) => {
+                const items = this.list(key);
+                item.id = item.id || generateId();
+                items.push(item);
+                this.set(key, items);
+                return item;
+            },
+            
+            update: (key, id, patch) => {
+                const items = this.list(key);
+                const index = items.findIndex(item => item.id === id);
+                if (index >= 0) {
+                    items[index] = { ...items[index], ...patch };
+                    this.set(key, items);
+                    return items[index];
+                }
+                return null;
+            },
+            
+            remove: (key, id) => {
+                const items = this.list(key);
+                const filtered = items.filter(item => item.id !== id);
+                this.set(key, filtered);
+                return filtered.length < items.length;
+            }
+        };
+        
+        // Authentication
+        const Auth = {
+            hash: async (password) => {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(password);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            },
+            
+            login: async (email, password) => {
+                const users = Storage.list('users');
+                const hashedPassword = await this.hash(password);
+                const user = users.find(u => u.email === email && u.password_hash === hashedPassword && u.active);
+                
+                if (user) {
+                    currentUser = { ...user };
+                    delete currentUser.password_hash;
+                    sessionStorage.setItem('current_user', JSON.stringify(currentUser));
+                    return user;
+                }
+                return null;
+            },
+            
+            logout: () => {
+                currentUser = null;
+                sessionStorage.removeItem('current_user');
+                showLogin();
+            },
+            
+            getCurrentUser: () => {
+                if (!currentUser) {
+                    const stored = sessionStorage.getItem('current_user');
+                    if (stored) {
+                        currentUser = JSON.parse(stored);
+                    }
+                }
+                return currentUser;
+            },
+            
+            hasRole: (role) => {
+                const user = this.getCurrentUser();
+                return user && user.role === role;
+            }
+        };
+        
+        // Toast Notifications
+        const Toast = {
+            show: (message, type = 'info', duration = 3000) => {
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                
+                const container = $('#toast-container');
+                container.appendChild(toast);
+                
+                setTimeout(() => toast.classList.add('show'), 100);
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => container.removeChild(toast), 300);
+                }, duration);
+            },
+            
+            success: (message) => this.show(message, 'success'),
+            error: (message) => this.show(message, 'error'),
+            warning: (message) => this.show(message, 'warning'),
+            info: (message) => this.show(message, 'info')
+        };
+        
+        // Modal
+        const Modal = {
+            show: (title, bodyHTML, actions = []) => {
+                $('#modal-title').textContent = title;
+                $('#modal-body').innerHTML = bodyHTML;
+                
+                if (actions.length > 0) {
+                    const actionsHTML = actions.map(action => 
+                        `<button class="btn ${action.class || 'btn-secondary'}" onclick="${action.onclick}">${action.text}</button>`
+                    ).join(' ');
+                    $('#modal-body').innerHTML += `<div class="flex gap-2 justify-end mt-4">${actionsHTML}</div>`;
+                }
+                
+                $('#modal').classList.add('show');
+            },
+            
+            close: () => {
+                $('#modal').classList.remove('show');
+            }
+        };
+        
+        const closeModal = () => Modal.close();
+        
+        // Confirm Dialog
+        const Confirm = {
+            show: (message, onYes) => {
+                Modal.show('Konfirmasi', `<p>${message}</p>`, [
+                    { text: 'Batal', onclick: 'closeModal()' },
+                    { text: 'Ya', class: 'btn-danger', onclick: `closeModal(); (${onYes})()` }
+                ]);
+            }
+        };
+        
+        // Simple Chart
+        const Chart = {
+            line: (canvas, data, labels) => {
+                const ctx = canvas.getContext('2d');
+                const { width, height } = canvas;
+                const padding = 40;
+                
+                ctx.clearRect(0, 0, width, height);
+                
+                if (!data.length) return;
+                
+                const maxValue = Math.max(...data);
+                const minValue = Math.min(...data);
+                const range = maxValue - minValue || 1;
+                
+                // Draw axes
+                ctx.strokeStyle = '#ccc';
+                ctx.beginPath();
+                ctx.moveTo(padding, padding);
+                ctx.lineTo(padding, height - padding);
+                ctx.lineTo(width - padding, height - padding);
+                ctx.stroke();
+                
+                // Draw line
+                ctx.strokeStyle = '#0ea5e9';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                
+                data.forEach((value, index) => {
+                    const x = padding + (index / (data.length - 1)) * (width - 2 * padding);
+                    const y = height - padding - ((value - minValue) / range) * (height - 2 * padding);
+                    
+                    if (index === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                });
+                
+                ctx.stroke();
+                
+                // Draw points
+                ctx.fillStyle = '#0ea5e9';
+                data.forEach((value, index) => {
+                    const x = padding + (index / (data.length - 1)) * (width - 2 * padding);
+                    const y = height - padding - ((value - minValue) / range) * (height - 2 * padding);
+                    
+                    ctx.beginPath();
+                    ctx.arc(x, y, 3, 0, 2 * Math.PI);
+                    ctx.fill();
+                });
+            }
+        };
+        
+        // Data Export/Import
+        const DataManager = {
+            exportJSON: () => {
+                const keys = ['users', 'flock', 'produksi', 'inventaris', 'biaya', 'produk', 'pelanggan', 'pesanan', 'settings'];
+                const data = {};
+                
+                keys.forEach(key => {
+                    data[key] = Storage.list(key);
+                });
+                
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `bumdes-backup-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                Toast.success('Data berhasil diekspor');
+            },
+            
+            importJSON: (file) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        
+                        Object.keys(data).forEach(key => {
+                            Storage.set(key, data[key]);
+                        });
+                        
+                        Toast.success('Data berhasil diimpor');
+                        setTimeout(() => location.reload(), 1000);
+                    } catch (error) {
+                        Toast.error('File tidak valid');
+                    }
+                };
+                reader.readAsText(file);
+            },
+            
+            exportCSV: (key, fields) => {
+                const data = Storage.list(key);
+                if (!data.length) {
+                    Toast.warning('Tidak ada data untuk diekspor');
+                    return;
+                }
+                
+                const headers = fields.map(f => f.label).join(',');
+                const rows = data.map(item => {
+                    return fields.map(field => {
+                        let value = item[field.key];
+                        if (field.format) value = field.format(value);
+                        return `"${String(value || '').replace(/"/g, '""')}"`;
+                    }).join(',');
+                });
+                
+                const csv = [headers, ...rows].join('\n');
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${key}-${new Date().toISOString().split('T')[0]}.csv`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                Toast.success('CSV berhasil diekspor');
+            }
+        };
+        
+        // Router
+        const Router = {
+            navigate: (route) => {
+                currentRoute = route;
+                
+                // Update nav active state
+                $$('.nav-item').forEach(item => item.classList.remove('active'));
+                $(`[data-route="${route}"]`)?.classList.add('active');
+                
+                // Render page
+                this.render();
+            },
+            
+            render: () => {
+                const content = $('#page-content');
+                
+                switch (currentRoute) {
+                    case 'dashboard':
+                        content.innerHTML = renderDashboard();
+                        break;
+                    case 'flock':
+                        content.innerHTML = renderFlockPage();
+                        break;
+                    case 'produksi':
+                        content.innerHTML = renderProduksiPage();
+                        break;
+                    case 'inventaris':
+                        content.innerHTML = renderInventarisPage();
+                        break;
+                    case 'biaya':
+                        content.innerHTML = renderBiayaPage();
+                        break;
+                    case 'produk':
+                        content.innerHTML = renderProdukPage();
+                        break;
+                    case 'pelanggan':
+                        content.innerHTML = renderPelangganPage();
+                        break;
+                    case 'pesanan':
+                        content.innerHTML = renderPesananPage();
+                        break;
+                    case 'analitik':
+                        content.innerHTML = renderAnalitikPage();
+                        break;
+                    case 'pengaturan':
+                        content.innerHTML = renderPengaturanPage();
+                        break;
+                    case 'ekspor':
+                        content.innerHTML = renderEksporPage();
+                        break;
+                    case 'katalog':
+                        content.innerHTML = renderKatalogPage();
+                        break;
+                    case 'pesanan-saya':
+                        content.innerHTML = renderPesananSayaPage();
+                        break;
+                    case 'profil':
+                        content.innerHTML = renderProfilPage();
+                        break;
+                    default:
+                        content.innerHTML = '<h2>Halaman tidak ditemukan</h2>';
+                }
+            }
+        };
+        
+        // Pages Rendering Functions
+        const renderDashboard = () => {
+            if (!Auth.hasRole('admin')) return '<h2>Akses Ditolak</h2>';
+            
+            const today = new Date().toISOString().split('T')[0];
+            const produksiHariIni = Storage.list('produksi').filter(p => p.tanggal === today);
+            const totalTelurHariIni = produksiHariIni.reduce((sum, p) => sum + (p.telur_butir || 0), 0);
+            
+            const pesananBulanIni = Storage.list('pesanan').filter(p => {
+                const orderMonth = new Date(p.tanggal).getMonth();
+                const currentMonth = new Date().getMonth();
+                return orderMonth === currentMonth;
+            });
+            const totalPenjualanBulanIni = pesananBulanIni.reduce((sum, p) => sum + (p.total || 0), 0);
+            
+            const biayaBulanIni = Storage.list('biaya').filter(b => {
+                const biayaMonth = new Date(b.tanggal).getMonth();
+                const currentMonth = new Date().getMonth();
+                return biayaMonth === currentMonth;
+            });
+            const totalBiayaBulanIni = biayaBulanIni.reduce((sum, b) => sum + (b.jumlah || 0), 0);
+            
+            // Calculate HD% for active flock
+            const aktiveFlock = Storage.list('flock').filter(f => !f.archived);
+            let avgHD = 0;
+            if (aktiveFlock.length > 0 && produksiHariIni.length > 0) {
+                const totalPopulasi = aktiveFlock.reduce((sum, f) => sum + (f.jumlah_awal - (f.mortalitas || 0)), 0);
+                avgHD = totalPopulasi > 0 ? (totalTelurHariIni / totalPopulasi) * 100 : 0;
+            }
+            
+            return `
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">${totalTelurHariIni}</div>
+                        <div class="stat-label">Telur Hari Ini (butir)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${formatPercent(avgHD)}</div>
+                        <div class="stat-label">HD% Hari Ini</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${formatRupiah(totalPenjualanBulanIni)}</div>
+                        <div class="stat-label">Penjualan Bulan Ini</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${pesananBulanIni.length}</div>
+                        <div class="stat-label">Pesanan Bulan Ini</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${formatRupiah(totalBiayaBulanIni)}</div>
+                        <div class="stat-label">OPEX Bulan Ini</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${formatRupiah(totalPenjualanBulanIni - totalBiayaBulanIni)}</div>
+                        <div class="stat-label">Margin Kotor</div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="font-bold mb-4">Tren Produksi 7 Hari Terakhir</h3>
+                    <div class="chart-container">
+                        <canvas id="chart-produksi" class="chart-canvas" width="800" height="300"></canvas>
+                    </div>
+                </div>
+            `;
+        };
+        
+        const renderFlockPage = () => {
+            if (!Auth.hasRole('admin')) return '<h2>Akses Ditolak</h2>';
+            
+            const flocks = Storage.list('flock');
+            
+            return `
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold">Manajemen Kandang & Flock</h2>
+                    <button class="btn btn-primary" onclick="showFlockForm()">Tambah Kandang</button>
+                </div>
+                
+                <div class="card">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nama Kandang</th>
+                                <th>Strain</th>
+                                <th>Mulai Produksi</th>
+                                <th>Jumlah Awal</th>
+                                <th>Mortalitas</th>
+                                <th>Populasi Aktif</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${flocks.map(flock => `
+                                <tr>
+                                    <td>${escapeHtml(flock.nama_kandang)}</td>
+                                    <td>${escapeHtml(flock.strain)}</td>
+                                    <td>${formatDate(flock.tgl_mulai_produksi)}</td>
+                                    <td>${flock.jumlah_awal}</td>
+                                    <td>${flock.mortalitas || 0}</td>
+                                    <td>${flock.jumlah_awal - (flock.mortalitas || 0)}</td>
+                                    <td>
+                                        <span class="btn btn-sm ${flock.archived ? 'btn-secondary' : 'btn-success'}">
+                                            ${flock.archived ? 'Arsip' : 'Aktif'}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="editFlock('${flock.id}')">Edit</button>
+                                        <button class="btn btn-sm btn-warning" onclick="toggleArchiveFlock('${flock.id}')">
+                                            ${flock.archived ? 'Aktifkan' : 'Arsipkan'}
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteFlock('${flock.id}')">Hapus</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        };
+        
+        const renderProduksiPage = () => {
+            if (!Auth.hasRole('admin')) return '<h2>Akses Ditolak</h2>';
+            
+            const produksi = Storage.list('produksi').sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+            const flocks = Storage.list('flock').filter(f => !f.archived);
+            
+            return `
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold">Produksi Telur Harian</h2>
+                    <button class="btn btn-primary" onclick="showProduksiForm()">Input Produksi</button>
+                </div>
+                
+                <div class="card">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Kandang</th>
+                                <th>Telur (butir)</th>
+                                <th>Grade A</th>
+                                <th>Grade B</th>
+                                <th>Grade C</th>
+                                <th>HD%</th>
+                                <th>Pakan (kg)</th>
+                                <th>FCR</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${produksi.map(p => {
+                                const flock = flocks.find(f => f.id === p.kandang_id);
+                                return `
+                                    <tr>
+                                        <td>${formatDate(p.tanggal)}</td>
+                                        <td>${flock ? escapeHtml(flock.nama_kandang) : 'N/A'}</td>
+                                        <td>${p.telur_butir || 0}</td>
+                                        <td>${p.grade_A || 0}</td>
+                                        <td>${p.grade_B || 0}</td>
+                                        <td>${p.grade_C || 0}</td>
+                                        <td>${formatPercent(p.hd_percent)}</td>
+                                        <td>${p.pakan_kg || 0}</td>
+                                        <td>${(p.fcr || 0).toFixed(2)}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary" onclick="editProduksi('${p.id}')">Edit</button>
+                                            <button class="btn btn-sm btn-danger" onclick="deleteProduksi('${p.id}')">Hapus</button>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        };
+        
+        const renderInventarisPage = () => {
+            if (!Auth.hasRole('admin')) return '<h2>Akses Ditolak</h2>';
+            
+            const inventaris = Storage.list('inventaris');
+            
+            return `
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold">Inventaris Pakan & Obat</h2>
+                    <button class="btn btn-primary" onclick="showInventarisForm()">Tambah Item</button>
+                </div>
+                
+                <div class="card">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Jenis</th>
+                                <th>Nama</th>
+                                <th>Stok</th>
+                                <th>Satuan</th>
+                                <th>Harga Beli</th>
+                                <th>Tgl Masuk</th>
+                                <th>Kadaluarsa</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${inventaris.map(item => `
+                                <tr class="${item.stok < 10 ? 'bg-warning' : ''}">
+                                    <td>${escapeHtml(item.jenis)}</td>
+                                    <td>${escapeHtml(item.nama)}</td>
+                                    <td>${item.stok}</td>
+                                    <td>${escapeHtml(item.satuan)}</td>
+                                    <td>${formatRupiah(item.harga_beli)}</td>
+                                    <td>${formatDate(item.tgl_masuk)}</td>
+                                    <td>${item.kadaluarsa ? formatDate(item.kadaluarsa) : '-'}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success" onclick="showStokMasukForm('${item.id}')">Masuk</button>
+                                        <button class="btn btn-sm btn-warning" onclick="showStokKeluarForm('${item.id}')">Keluar</button>
+                                        <button class="btn btn-sm btn-primary" onclick="editInventaris('${item.id}')">Edit</button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteInventaris('${item.id}')">Hapus</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        };
+        
+        const renderBiayaPage = () => {
+            if (!Auth.hasRole('admin')) return '<h2>Akses Ditolak</h2>';
+            
+            const biaya = Storage.list('biaya').sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+            const totalBulanIni = biaya.filter(b => {
+                const biayaMonth = new Date(b.tanggal).getMonth();
+                const currentMonth = new Date().getMonth();
+                return biayaMonth === currentMonth;
+            }).reduce((sum, b) => sum + (b.jumlah || 0), 0);
+            
+            return `
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold">Biaya Operasional (OPEX)</h2>
+                    <button class="btn btn-primary" onclick="showBiayaForm()">Tambah Biaya</button>
+                </div>
+                
+                <div class="stat-card mb-4">
+                    <div class="stat-value">${formatRupiah(totalBulanIni)}</div>
+                    <div class="stat-label">Total OPEX Bulan Ini</div>
+                </div>
+                
+                <div class="card">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Kategori</th>
+                                <th>Deskripsi</th>
+                                <th>Jumlah</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${biaya.map(b => `
+                                <tr>
+                                    <td>${formatDate(b.tanggal)}</td>
+                                    <td>${escapeHtml(b.kategori)}</td>
+                                    <td>${escapeHtml(b.deskripsi)}</td>
+                                    <td>${formatRupiah(b.jumlah)}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="editBiaya('${b.id}')">Edit</button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteBiaya('${b.id}')">Hapus</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        };
+        
+        const renderProdukPage = () => {
+            if (!Auth.hasRole('admin')) return '<h2>Akses Ditolak</h2>';
+            
+            const produk = Storage.list('produk');
+            
+            return `
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold">Katalog Produk Telur</h2>
+                    <button class="btn btn-primary" onclick="showProdukForm()">Tambah Produk</button>
+                </div>
+                
+                <div class="card">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nama Produk</th>
+                                <th>Satuan</th>
+                                <th>Harga Jual</th>
+                                <th>Stok</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${produk.map(p => `
+                                <tr>
+                                    <td>${escapeHtml(p.nama)}</td>
+                                    <td>${escapeHtml(p.satuan)}</td>
+                                    <td>${formatRupiah(p.harga_jual)}</td>
+                                    <td>${p.stok || 0}</td>
+                                    <td>
+                                        <span class="btn btn-sm ${p.aktif ? 'btn-success' : 'btn-secondary'}">
+                                            ${p.aktif ? 'Aktif' : 'Nonaktif'}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="editProduk('${p.id}')">Edit</button>
+                                        <button class="btn btn-sm btn-warning" onclick="toggleProduk('${p.id}')">
+                                            ${p.aktif ? 'Nonaktifkan' : 'Aktifkan'}
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteProduk('${p.id}')">Hapus</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        };
+        
+        const renderPelangganPage = () => {
+            if (!Auth.hasRole('admin')) return '<h2>Akses Ditolak</h2>';
+            
+            const pelanggan = Storage.list('pelanggan');
+            
+            return `
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold">Manajemen Pelanggan</h2>
+                    <button class="btn btn-primary" onclick="showPelangganForm()">Tambah Pelanggan</button>
+                </div>
+                
+                <div class="card">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nama</th>
+                                <th>Email</th>
+                                <th>Telepon</th>
+                                <th>Tipe</th>
+                                <th>Alamat</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${pelanggan.map(p => `
+                                <tr>
+                                    <td>${escapeHtml(p.nama)}</td>
+                                    <td>${escapeHtml(p.email)}</td>
+                                    <td>${escapeHtml(p.telepon)}</td>
+                                    <td>${escapeHtml(p.tipe)}</td>
+                                    <td>${escapeHtml(p.alamat)}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="editPelanggan('${p.id}')">Edit</button>
+                                        <button class="btn btn-sm btn-info" onclick="viewPelangganHistory('${p.id}')">Riwayat</button>
+                                        <button class="btn btn-sm btn-danger" onclick="deletePelanggan('${p.id}')">Hapus</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        };
+        
+        const renderPesananPage = () => {
+            if (!Auth.hasRole('admin')) return '<h2>Akses Ditolak</h2>';
+            
+            const pesanan = Storage.list('pesanan').sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+            const pelanggan = Storage.list('pelanggan');
+            
+            return `
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold">Manajemen Pesanan</h2>
+                    <div class="flex gap-2">
+                        <button class="btn btn-primary" onclick="showPesananForm()">Buat Pesanan</button>
+                        <button class="btn btn-secondary" onclick="DataManager.exportCSV('pesanan', [{key:'kode',label:'Kode'},{key:'tanggal',label:'Tanggal'},{key:'total',label:'Total',format:formatRupiah},{key:'status',label:'Status'}])">Ekspor CSV</button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Kode</th>
+                                <th>Tanggal</th>
+                                <th>Pelanggan</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${pesanan.map(p => {
+                                const customer = pelanggan.find(c => c.id === p.pelanggan_id);
+                                return `
+                                    <tr>
+                                        <td>${escapeHtml(p.kode)}</td>
+                                        <td>${formatDate(p.tanggal)}</td>
+                                        <td>${customer ? escapeHtml(customer.nama) : 'N/A'}</td>
+                                        <td>${formatRupiah(p.total)}</td>
+                                        <td>
+                                            <span class="btn btn-sm ${getStatusClass(p.status)}">
+                                                ${p.status}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary" onclick="viewPesanan('${p.id}')">Detail</button>
+                                            <button class="btn btn-sm btn-success" onclick="updateStatusPesanan('${p.id}')">Update Status</button>
+                                            <button class="btn btn-sm btn-info" onclick="printInvoice('${p.id}')">Cetak</button>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        };
+        
+        const renderAnalitikPage = () => {
+            if (!Auth.hasRole('admin')) return '<h2>Akses Ditolak</h2>';
+            
+            return `
+                <h2 class="text-lg font-bold mb-4">Analitik & Laporan</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="card">
+                        <h3 class="font-bold mb-4">Tren HD% 30 Hari</h3>
+                        <canvas id="chart-hd-trend" width="400" height="200"></canvas>
+                    </div>
+                    
+                    <div class="card">
+                        <h3 class="font-bold mb-4">Penjualan Bulanan</h3>
+                        <canvas id="chart-sales-trend" width="400" height="200"></canvas>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 class="font-bold mb-4">Laporan Produksi 30 Hari Terakhir</h3>
+                    <div id="tabel-analitik"></div>
+                </div>
+            `;
+        };
+        
+        const renderKatalogPage = () => {
+            if (!Auth.hasRole('pelanggan')) return '<h2>Akses Ditolak</h2>';
+            
+            const produk = Storage.list('produk').filter(p => p.aktif);
+            const keranjang = JSON.parse(sessionStorage.getItem('keranjang') || '[]');
+            
+            return `
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold">Katalog Telur</h2>
+                    <button class="btn btn-primary" onclick="showKeranjang()">Keranjang (${keranjang.length})</button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    ${produk.map(p => `
+                        <div class="card">
+                            <h3 class="font-bold text-lg mb-2">${escapeHtml(p.nama)}</h3>
+                            <p class="text-secondary mb-2">${escapeHtml(p.deskripsi || '')}</p>
+                            <p class="text-lg font-bold text-primary mb-2">${formatRupiah(p.harga_jual)} / ${p.satuan}</p>
+                            <p class="text-sm text-secondary mb-4">Stok: ${p.stok || 0} ${p.satuan}</p>
+                            <div class="flex gap-2">
+                                <input type="number" id="qty-${p.id}" class="form-control" min="1" value="1" style="width: 80px;">
+                                <button class="btn btn-primary" onclick="addToKeranjang('${p.id}')">Tambah</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        };
+        
+        const renderPesananSayaPage = () => {
+            if (!Auth.hasRole('pelanggan')) return '<h2>Akses Ditolak</h2>';
+            
+            const user = Auth.getCurrentUser();
+            const pesanan = Storage.list('pesanan')
+                .filter(p => p.pelanggan_id === user.id)
+                .sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+            
+            return `
+                <h2 class="text-lg font-bold mb-4">Pesanan Saya</h2>
+                
+                <div class="card">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Kode</th>
+                                <th>Tanggal</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${pesanan.map(p => `
+                                <tr>
+                                    <td>${escapeHtml(p.kode)}</td>
+                                    <td>${formatDate(p.tanggal)}</td>
+                                    <td>${formatRupiah(p.total)}</td>
+                                    <td>
+                                        <span class="btn btn-sm ${getStatusClass(p.status)}">
+                                            ${p.status}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="viewPesanan('${p.id}')">Detail</button>
+                                        <button class="btn btn-sm btn-info" onclick="printBuktiPesanan('${p.id}')">Bukti</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        };
+        
+        const renderProfilPage = () => {
+            const user = Auth.getCurrentUser();
+            if (!user) return '<h2>Akses Ditolak</h2>';
+            
+            return `
+                <h2 class="text-lg font-bold mb-4">Profil Saya</h2>
+                
+                <div class="card">
+                    <form id="profil-form" onsubmit="updateProfil(event)">
+                        <div class="form-group">
+                            <label class="form-label">Nama</label>
+                            <input type="text" class="form-control" name="nama" value="${escapeHtml(user.nama)}" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" value="${escapeHtml(user.email)}" required>
+                        </div>
+                        ${user.role === 'pelanggan' ? `
+                            <div class="form-group">
+                                <label class="form-label">Telepon</label>
+                                <input type="text" class="form-control" name="telepon" value="${escapeHtml(user.telepon || '')}">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Alamat</label>
+                                <textarea class="form-control" name="alamat" rows="3">${escapeHtml(user.alamat || '')}</textarea>
+                            </div>
+                        ` : ''}
+                        <div class="form-group">
+                            <label class="form-label">Password Baru (kosongkan jika tidak ingin mengubah)</label>
+                            <input type="password" class="form-control" name="password">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Profil</button>
+                    </form>
+                </div>
+            `;
+        };
+        
+        const renderPengaturanPage = () => {
+            if (!Auth.hasRole('admin')) return '<h2>Akses Ditolak</h2>';
+            
+            const settings = Storage.get('settings') || {};
+            
+            return `
+                <h2 class="text-lg font-bold mb-4">Pengaturan</h2>
+                
+                <div class="card">
+                    <form id="pengaturan-form" onsubmit="updatePengaturan(event)">
+                        <div class="form-group">
+                            <label class="form-label">Nama BUMDes</label>
+                            <input type="text" class="form-control" name="nama_bumdes" value="${escapeHtml(settings.nama_bumdes || 'BUMDes Peternakan Ayam')}" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Logo Text</label>
+                            <input type="text" class="form-control" name="logo_text" value="${escapeHtml(settings.logo_text || 'BUMDes')}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Alamat</label>
+                            <textarea class="form-control" name="alamat" rows="3">${escapeHtml(settings.alamat || '')}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Telepon</label>
+                            <input type="text" class="form-control" name="telepon" value="${escapeHtml(settings.telepon || '')}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" value="${escapeHtml(settings.email || '')}">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Simpan Pengaturan</button>
+                    </form>
+                </div>
+            `;
+        };
+        
+        const renderEksporPage = () => {
+            if (!Auth.hasRole('admin')) return '<h2>Akses Ditolak</h2>';
+            
+            return `
+                <h2 class="text-lg font-bold mb-4">Ekspor & Impor Data</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="card">
+                        <h3 class="font-bold mb-4">Ekspor Data</h3>
+                        <div class="flex flex-col gap-2">
+                            <button class="btn btn-primary" onclick="DataManager.exportJSON()">Ekspor Semua Data (JSON)</button>
+                            <button class="btn btn-secondary" onclick="DataManager.exportCSV('produksi', [{key:'tanggal',label:'Tanggal'},{key:'telur_butir',label:'Telur Butir'},{key:'hd_percent',label:'HD%',format:formatPercent}])">Ekspor Produksi (CSV)</button>
+                            <button class="btn btn-secondary" onclick="DataManager.exportCSV('pesanan', [{key:'kode',label:'Kode'},{key:'tanggal',label:'Tanggal'},{key:'total',label:'Total',format:formatRupiah},{key:'status',label:'Status'}])">Ekspor Pesanan (CSV)</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3 class="font-bold mb-4">Impor Data</h3>
+                        <div class="form-group">
+                            <label class="form-label">Upload File JSON</label>
+                            <input type="file" class="form-control" id="import-file" accept=".json" onchange="handleImport(this)">
+                        </div>
+                        <p class="text-sm text-secondary">Hati-hati: Impor akan menimpa data yang ada!</p>
+                    </div>
+                </div>
+            `;
+        };
+        
+        // Helper Functions
+        const getStatusClass = (status) => {
+            const classes = {
+                'draft': 'btn-secondary',
+                'menunggu': 'btn-warning',
+                'disetujui': 'btn-info',
+                'dibayar': 'btn-success',
+                'dikirim': 'btn-primary',
+                'selesai': 'btn-success',
+                'batal': 'btn-danger'
+            };
+            return classes[status] || 'btn-secondary';
+        };
+        
+        // Form Functions
+        const showFlockForm = (id = null) => {
+            const flock = id ? Storage.list('flock').find(f => f.id === id) : {};
+            const isEdit = !!id;
+            
+            const formHTML = `
+                <form id="flock-form" onsubmit="saveFlock(event, '${id || ''}')">
+                    <div class="form-group">
+                        <label class="form-label">Nama Kandang</label>
+                        <input type="text" class="form-control" name="nama_kandang" value="${escapeHtml(flock.nama_kandang || '')}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Strain</label>
+                        <input type="text" class="form-control" name="strain" value="${escapeHtml(flock.strain || '')}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tanggal Mulai Produksi</label>
+                        <input type="date" class="form-control" name="tgl_mulai_produksi" value="${flock.tgl_mulai_produksi || ''}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Jumlah Awal</label>
+                        <input type="number" class="form-control" name="jumlah_awal" value="${flock.jumlah_awal || ''}" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mortalitas</label>
+                        <input type="number" class="form-control" name="mortalitas" value="${flock.mortalitas || 0}" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Catatan</label>
+                        <textarea class="form-control" name="catatan" rows="3">${escapeHtml(flock.catatan || '')}</textarea>
+                    </div>
+                    <div class="flex gap-2 justify-end">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Batal</button>
+                        <button type="submit" class="btn btn-primary">${isEdit ? 'Update' : 'Simpan'}</button>
+                    </div>
+                </form>
+            `;
+            
+            Modal.show(isEdit ? 'Edit Kandang' : 'Tambah Kandang', formHTML);
+        };
+        
+        const saveFlock = (event, id) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            
+            data.jumlah_awal = parseInt(data.jumlah_awal);
+            data.mortalitas = parseInt(data.mortalitas) || 0;
+            
+            if (id) {
+                Storage.update('flock', id, data);
+                Toast.success('Kandang berhasil diupdate');
+            } else {
+                Storage.push('flock', data);
+                Toast.success('Kandang berhasil ditambahkan');
+            }
+            
+            closeModal();
+            Router.render();
+        };
+        
+        const editFlock = (id) => showFlockForm(id);
+        
+        const toggleArchiveFlock = (id) => {
+            const flock = Storage.list('flock').find(f => f.id === id);
+            if (flock) {
+                Storage.update('flock', id, { archived: !flock.archived });
+                Toast.success(`Kandang ${flock.archived ? 'diaktifkan' : 'diarsipkan'}`);
+                Router.render();
+            }
+        };
+        
+        const deleteFlock = (id) => {
+            Confirm.show('Hapus kandang ini?', () => {
+                Storage.remove('flock', id);
+                Toast.success('Kandang berhasil dihapus');
+                Router.render();
+            });
+        };
+        
+        const showProduksiForm = (id = null) => {
+            const produksi = id ? Storage.list('produksi').find(p => p.id === id) : {};
+            const flocks = Storage.list('flock').filter(f => !f.archived);
+            const isEdit = !!id;
+            
+            const formHTML = `
+                <form id="produksi-form" onsubmit="saveProduksi(event, '${id || ''}')">
+                    <div class="form-group">
+                        <label class="form-label">Tanggal</label>
+                        <input type="date" class="form-control" name="tanggal" value="${produksi.tanggal || new Date().toISOString().split('T')[0]}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Kandang</label>
+                        <select class="form-control" name="kandang_id" required>
+                            <option value="">Pilih Kandang</option>
+                            ${flocks.map(f => `
+                                <option value="${f.id}" ${produksi.kandang_id === f.id ? 'selected' : ''}>
+                                    ${escapeHtml(f.nama_kandang)}
+                                </option>
+                            `).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Telur Total (butir)</label>
+                        <input type="number" class="form-control" name="telur_butir" value="${produksi.telur_butir || ''}" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Grade A (butir)</label>
+                        <input type="number" class="form-control" name="grade_A" value="${produksi.grade_A || 0}" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Grade B (butir)</label>
+                        <input type="number" class="form-control" name="grade_B" value="${produksi.grade_B || 0}" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Grade C (butir)</label>
+                        <input type="number" class="form-control" name="grade_C" value="${produksi.grade_C || 0}" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Retak/Rusak (butir)</label>
+                        <input type="number" class="form-control" name="retak_rusak" value="${produksi.retak_rusak || 0}" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Pakan (kg)</label>
+                        <input type="number" class="form-control" name="pakan_kg" value="${produksi.pakan_kg || ''}" min="0" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Catatan</label>
+                        <textarea class="form-control" name="catatan" rows="3">${escapeHtml(produksi.catatan || '')}</textarea>
+                    </div>
+                    <div class="flex gap-2 justify-end">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Batal</button>
+                        <button type="submit" class="btn btn-primary">${isEdit ? 'Update' : 'Simpan'}</button>
+                    </div>
+                </form>
+            `;
+            
+            Modal.show(isEdit ? 'Edit Produksi' : 'Input Produksi', formHTML);
+        };
+        
+        const saveProduksi = (event, id) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            
+            // Convert to numbers
+            ['telur_butir', 'grade_A', 'grade_B', 'grade_C', 'retak_rusak', 'pakan_kg'].forEach(field => {
+                data[field] = parseFloat(data[field]) || 0;
+            });
+            
+            // Calculate HD% and FCR
+            const flock = Storage.list('flock').find(f => f.id === data.kandang_id);
+            if (flock) {
+                const populasiAktif = flock.jumlah_awal - (flock.mortalitas || 0);
+                data.hd_percent = populasiAktif > 0 ? (data.telur_butir / populasiAktif) * 100 : 0;
+                data.fcr = data.telur_butir > 0 && data.pakan_kg > 0 ? data.pakan_kg / (data.telur_butir * 0.06) : 0; // Assuming 60g per egg
+            }
+            
+            if (id) {
+                Storage.update('produksi', id, data);
+                Toast.success('Data produksi berhasil diupdate');
+            } else {
+                Storage.push('produksi', data);
+                Toast.success('Data produksi berhasil ditambahkan');
+            }
+            
+            closeModal();
+            Router.render();
+        };
+        
+        const editProduksi = (id) => showProduksiForm(id);
+        
+        const deleteProduksi = (id) => {
+            Confirm.show('Hapus data produksi ini?', () => {
+                Storage.remove('produksi', id);
+                Toast.success('Data produksi berhasil dihapus');
+                Router.render();
+            });
+        };
+        
+        // More form functions...
+        const showInventarisForm = (id = null) => {
+            const item = id ? Storage.list('inventaris').find(i => i.id === id) : {};
+            const isEdit = !!id;
+            
+            const formHTML = `
+                <form id="inventaris-form" onsubmit="saveInventaris(event, '${id || ''}')">
+                    <div class="form-group">
+                        <label class="form-label">Jenis</label>
+                        <select class="form-control" name="jenis" required>
+                            <option value="">Pilih Jenis</option>
+                            <option value="pakan" ${item.jenis === 'pakan' ? 'selected' : ''}>Pakan</option>
+                            <option value="obat" ${item.jenis === 'obat' ? 'selected' : ''}>Obat</option>
+                            <option value="vitamin" ${item.jenis === 'vitamin' ? 'selected' : ''}>Vitamin</option>
+                            <option value="kemasan" ${item.jenis === 'kemasan' ? 'selected' : ''}>Kemasan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nama</label>
+                        <input type="text" class="form-control" name="nama" value="${escapeHtml(item.nama || '')}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Satuan</label>
+                        <input type="text" class="form-control" name="satuan" value="${escapeHtml(item.satuan || '')}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Stok Awal</label>
+                        <input type="number" class="form-control" name="stok" value="${item.stok || 0}" min="0" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Harga Beli</label>
+                        <input type="number" class="form-control" name="harga_beli" value="${item.harga_beli || ''}" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tanggal Masuk</label>
+                        <input type="date" class="form-control" name="tgl_masuk" value="${item.tgl_masuk || new Date().toISOString().split('T')[0]}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tanggal Kadaluarsa (opsional)</label>
+                        <input type="date" class="form-control" name="kadaluarsa" value="${item.kadaluarsa || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Catatan</label>
+                        <textarea class="form-control" name="catatan" rows="3">${escapeHtml(item.catatan || '')}</textarea>
+                    </div>
+                    <div class="flex gap-2 justify-end">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Batal</button>
+                        <button type="submit" class="btn btn-primary">${isEdit ? 'Update' : 'Simpan'}</button>
+                    </div>
+                </form>
+            `;
+            
+            Modal.show(isEdit ? 'Edit Item' : 'Tambah Item', formHTML);
+        };
+        
+        const saveInventaris = (event, id) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            
+            data.stok = parseFloat(data.stok) || 0;
+            data.harga_beli = parseFloat(data.harga_beli) || 0;
+            
+            if (id) {
+                Storage.update('inventaris', id, data);
+                Toast.success('Item berhasil diupdate');
+            } else {
+                Storage.push('inventaris', data);
+                Toast.success('Item berhasil ditambahkan');
+            }
+            
+            closeModal();
+            Router.render();
+        };
+        
+        const editInventaris = (id) => showInventarisForm(id);
+        
+        const deleteInventaris = (id) => {
+            Confirm.show('Hapus item ini?', () => {
+                Storage.remove('inventaris', id);
+                Toast.success('Item berhasil dihapus');
+                Router.render();
+            });
+        };
+        
+        // Keranjang functions
+        const addToKeranjang = (produkId) => {
+            const produk = Storage.list('produk').find(p => p.id === produkId);
+            const qty = parseInt($(`#qty-${produkId}`).value) || 1;
+            
+            if (!produk) return;
+            
+            let keranjang = JSON.parse(sessionStorage.getItem('keranjang') || '[]');
+            const existing = keranjang.find(item => item.produk_id === produkId);
+            
+            if (existing) {
+                existing.qty += qty;
+            } else {
+                keranjang.push({
+                    produk_id: produkId,
+                    nama: produk.nama,
+                    harga: produk.harga_jual,
+                    satuan: produk.satuan,
+                    qty: qty
+                });
+            }
+            
+            sessionStorage.setItem('keranjang', JSON.stringify(keranjang));
+            Toast.success(`${produk.nama} ditambahkan ke keranjang`);
+            Router.render();
+        };
+        
+        const showKeranjang = () => {
+            const keranjang = JSON.parse(sessionStorage.getItem('keranjang') || '[]');
+            const total = keranjang.reduce((sum, item) => sum + (item.harga * item.qty), 0);
+            
+            const formHTML = `
+                <div id="keranjang-items">
+                    ${keranjang.map((item, index) => `
+                        <div class="flex justify-between items-center border-b py-2">
+                            <div>
+                                <div class="font-bold">${escapeHtml(item.nama)}</div>
+                                <div class="text-sm text-secondary">${formatRupiah(item.harga)} / ${item.satuan}</div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input type="number" class="form-control" style="width: 60px;" min="1" value="${item.qty}" onchange="updateKeranjangQty(${index}, this.value)">
+                                <button class="btn btn-sm btn-danger" onclick="removeFromKeranjang(${index})">×</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="mt-4 p-3 bg-secondary rounded">
+                    <div class="font-bold text-lg">Total: ${formatRupiah(total)}</div>
+                </div>
+                <div class="flex gap-2 justify-end mt-4">
+                    <button class="btn btn-secondary" onclick="closeModal()">Tutup</button>
+                    <button class="btn btn-primary" onclick="checkoutKeranjang()" ${keranjang.length === 0 ? 'disabled' : ''}>Checkout</button>
+                </div>
+            `;
+            
+            Modal.show('Keranjang Belanja', formHTML);
+        };
+        
+        const updateKeranjangQty = (index, newQty) => {
+            let keranjang = JSON.parse(sessionStorage.getItem('keranjang') || '[]');
+            if (keranjang[index]) {
+                keranjang[index].qty = parseInt(newQty) || 1;
+                sessionStorage.setItem('keranjang', JSON.stringify(keranjang));
+                showKeranjang(); // Refresh modal
+            }
+        };
+        
+        const removeFromKeranjang = (index) => {
+            let keranjang = JSON.parse(sessionStorage.getItem('keranjang') || '[]');
+            keranjang.splice(index, 1);
+            sessionStorage.setItem('keranjang', JSON.stringify(keranjang));
+            showKeranjang(); // Refresh modal
+        };
+        
+        const checkoutKeranjang = () => {
+            const keranjang = JSON.parse(sessionStorage.getItem('keranjang') || '[]');
+            if (keranjang.length === 0) return;
+            
+            const user = Auth.getCurrentUser();
+            const total = keranjang.reduce((sum, item) => sum + (item.harga * item.qty), 0);
+            
+            // Create order
+            const pesanan = {
+                tanggal: new Date().toISOString().split('T')[0],
+                kode: generateId('ORD'),
+                pelanggan_id: user.id,
+                status: 'menunggu',
+                metode_bayar: 'tunai',
+                total: total,
+                items: keranjang.map(item => ({
+                    produk_id: item.produk_id,
+                    nama_snapshot: item.nama,
+                    qty: item.qty,
+                    harga: item.harga,
+                    subtotal: item.qty * item.harga
+                }))
+            };
+            
+            Storage.push('pesanan', pesanan);
+            
+            // Clear keranjang
+            sessionStorage.removeItem('keranjang');
+            
+            // Play notification sound
+            try {
+                $('#snd-new-order').play();
+            } catch (e) {
+                // Ignore if sound fails
+            }
+            
+            Toast.success('Pesanan berhasil dibuat!');
+            closeModal();
+            Router.navigate('pesanan-saya');
+        };
+        
+        // Initialize and Seed Data
+        const initializeApp = async () => {
+            // Check if first run
+            if (!Storage.get('initialized')) {
+                await seedData();
+                Storage.set('initialized', true);
+            }
+            
+            // Check login status
+            const user = Auth.getCurrentUser();
+            if (user) {
+                showMainApp();
+            } else {
+                showLogin();
+            }
+        };
+        
+        const seedData = async () => {
+            // Create admin user
+            const adminPassword = await Auth.hash('123456');
+            const pelangganPassword = await Auth.hash('123456');
+            
+            const users = [
+                {
+                    id: generateId(),
+                    nama: 'Administrator',
+                    email: 'admin@bumdes.local',
+                    role: 'admin',
+                    active: true,
+                    password_hash: adminPassword
+                },
+                {
+                    id: generateId(),
+                    nama: 'Pelanggan Demo',
+                    email: 'pelanggan@contoh.local',
+                    role: 'pelanggan',
+                    active: true,
+                    password_hash: pelangganPassword,
+                    telepon: '081234567890',
+                    alamat: 'Jl. Contoh No. 123',
+                    tipe: 'ritel'
+                }
+            ];
+            
+            Storage.set('users', users);
+            Storage.set('pelanggan', users.filter(u => u.role === 'pelanggan'));
+            
+            // Create sample flock
+            const flock = {
+                id: generateId(),
+                nama_kandang: 'Layer 1',
+                strain: 'ISA Brown',
+                tgl_mulai_produksi: '2024-01-01',
+                jumlah_awal: 1000,
+                mortalitas: 50,
+                masa_puncak_persen: 85,
+                catatan: 'Kandang utama',
+                archived: false
+            };
+            Storage.push('flock', flock);
+            
+            // Create sample products
+            const produk = [
+                {
+                    id: generateId(),
+                    nama: 'Telur Grade A',
+                    satuan: 'tray',
+                    harga_jual: 28000,
+                    stok: 100,
+                    aktif: true,
+                    deskripsi: 'Telur segar grade A, 30 butir per tray'
+                },
+                {
+                    id: generateId(),
+                    nama: 'Telur Grade B',
+                    satuan: 'tray',
+                    harga_jual: 25000,
+                    stok: 150,
+                    aktif: true,
+                    deskripsi: 'Telur segar grade B, 30 butir per tray'
+                },
+                {
+                    id: generateId(),
+                    nama: 'Telur Grade C',
+                    satuan: 'kg',
+                    harga_jual: 22000,
+                    stok: 50,
+                    aktif: true,
+                    deskripsi: 'Telur grade C untuk industri'
+                }
+            ];
+            Storage.set('produk', produk);
+            
+            // Create sample production data
+            const today = new Date();
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                
+                const produksi = {
+                    id: generateId(),
+                    tanggal: date.toISOString().split('T')[0],
+                    kandang_id: flock.id,
+                    telur_butir: 800 + Math.floor(Math.random() * 100),
+                    grade_A: 600 + Math.floor(Math.random() * 50),
+                    grade_B: 150 + Math.floor(Math.random() * 30),
+                    grade_C: 50 + Math.floor(Math.random() * 20),
+                    retak_rusak: Math.floor(Math.random() * 10),
+                    pakan_kg: 110 + Math.floor(Math.random() * 10),
+                    hd_percent: ((800 + Math.floor(Math.random() * 100)) / 950) * 100, // 950 = active population
+                    fcr: 2.1 + Math.random() * 0.3
+                };
+                Storage.push('produksi', produksi);
+            }
+            
+            // Settings
+            const settings = {
+                nama_bumdes: 'BUMDes Peternakan Ayam Petelur',
+                logo_text: 'BUMDes Layer',
+                alamat: 'Desa Contoh, Kec. Contoh, Kab. Contoh',
+                telepon: '0274-123456',
+                email: 'info@bumdes.local'
+            };
+            Storage.set('settings', settings);
+        };
+        
+        const showLogin = () => {
+            $('#login-screen').classList.remove('hidden');
+            $('#main-app').classList.add('hidden');
+        };
+        
+        const showMainApp = () => {
+            $('#login-screen').classList.add('hidden');
+            $('#main-app').classList.remove('hidden');
+            
+            const user = Auth.getCurrentUser();
+            $('#user-name').textContent = user.nama;
+            
+            renderNavigation();
+            Router.navigate('dashboard');
+        };
+        
+        const renderNavigation = () => {
+            const user = Auth.getCurrentUser();
+            const navMenu = $('#nav-menu');
+            
+            if (user.role === 'admin') {
+                navMenu.innerHTML = `
+                    <a class="nav-item" data-route="dashboard" onclick="Router.navigate('dashboard')">Dashboard</a>
+                    <a class="nav-item" data-route="flock" onclick="Router.navigate('flock')">Kandang & Flock</a>
+                    <a class="nav-item" data-route="produksi" onclick="Router.navigate('produksi')">Produksi</a>
+                    <a class="nav-item" data-route="inventaris" onclick="Router.navigate('inventaris')">Inventaris</a>
+                    <a class="nav-item" data-route="biaya" onclick="Router.navigate('biaya')">Biaya</a>
+                    <a class="nav-item" data-route="produk" onclick="Router.navigate('produk')">Produk</a>
+                    <a class="nav-item" data-route="pelanggan" onclick="Router.navigate('pelanggan')">Pelanggan</a>
+                    <a class="nav-item" data-route="pesanan" onclick="Router.navigate('pesanan')">Pesanan</a>
+                    <a class="nav-item" data-route="analitik" onclick="Router.navigate('analitik')">Analitik</a>
+                    <a class="nav-item" data-route="pengaturan" onclick="Router.navigate('pengaturan')">Pengaturan</a>
+                    <a class="nav-item" data-route="ekspor" onclick="Router.navigate('ekspor')">Ekspor/Impor</a>
+                `;
+            } else {
+                navMenu.innerHTML = `
+                    <a class="nav-item" data-route="katalog" onclick="Router.navigate('katalog')">Katalog</a>
+                    <a class="nav-item" data-route="pesanan-saya" onclick="Router.navigate('pesanan-saya')">Pesanan Saya</a>
+                    <a class="nav-item" data-route="profil" onclick="Router.navigate('profil')">Profil</a>
+                `;
+            }
+        };
+        
+        const handleImport = (input) => {
+            const file = input.files[0];
+            if (file) {
+                DataManager.importJSON(file);
+            }
+        };
+        
+        // Event Listeners
+        $('#login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const { email, password } = Object.fromEntries(formData);
+            
+            const user = await Auth.login(email, password);
+            if (user) {
+                showMainApp();
+                Toast.success(`Selamat datang, ${user.nama}!`);
+            } else {
+                Toast.error('Email atau password salah');
+            }
+        });
+        
+        $('#logout-btn').addEventListener('click', () => {
+            Auth.logout();
+        });
+        
+        $('#theme-toggle').addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+        
+        // Load theme
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+        
+        // Start app
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>
